@@ -47,16 +47,16 @@ main();
 const sendMessage = async (topicName: string, message: {user: string, message: string}) => {
   const producer = kafka.producer();
   try {
-
+    console.log(topicName, message)
     await producer.connect();
-    await producer.send({
+    const sent = await producer.send({
       topic: topicName,
       messages: [
         { value: JSON.stringify(message) },
       ],
     });
 
-    console.log(`Sent message: ${JSON.stringify(message)}`);
+    console.log(`Sent message: ${JSON.stringify(message)}`, sent);
   } catch (error) {
     console.error("Error sending message:", error);
   } finally {
