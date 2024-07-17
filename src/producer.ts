@@ -1,29 +1,58 @@
 import { Kafka } from "kafkajs";
 import { v4 as uuidv4 } from "uuid";
-import inquirer from "inquirer";
+import readline from 'readline';
 
-
-const kafka = new Kafka({
-  brokers: ["localhost:19092"],
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
 
-const producer = kafka.producer();
+const kafka = new Kafka({
+  brokers: process.env.BROKERS?.split(',') || ["localhost:19092"],
+});
 
-const groupId = '3ab53af2-06c8-458a-936d-b2dab16d6d44';
-const topic = 'testtopic';
 
-async function sendMessage(topicName: string, groupId: string) {
-  const message = {
-    user: uuidv4(),
-    message: `New message at ${new Date().toLocaleString()}`,
-  };
+const main = async () => {
+  let action;
+  do {
+    action = await new Promise((resolve) => rl.question("What would you like to do? (press 1 for send message, press 2 for exit) ", (answer) => resolve(answer.toLowerCase())));
 
+    switch (action) {
+      case "1": {
+        const topicName : string= await new Promise((resolve) => rl.question("Enter the topic name (default: testtopic): ", (answer) => resolve(answer || "testtopic")));
+        const message = {
+          user: uuidv4(),
+          message: `New message at ${new Date().toLocaleString()}`,
+        };
+
+        setInterval(() => {
+          sendMessage(topicName, message);
+        }, 1000);
+        break;
+      }
+      case "2":
+        console.log("Exiting...");
+        break;
+      default:
+        console.log("Invalid option. Please try again.");
+    }
+  } while (action !== "2");
+
+  rl.close();
+};
+
+main();
+
+
+const sendMessage = async (topicName: string, message: {user: string, message: string}) => {
+  const producer = kafka.producer();
   try {
+
     await producer.connect();
     await producer.send({
       topic: topicName,
       messages: [
-        { value: JSON.stringify(message) }, 
+        { value: JSON.stringify(message) },
       ],
     });
 
@@ -34,42 +63,3 @@ async function sendMessage(topicName: string, groupId: string) {
     await producer.disconnect();
   }
 }
-
-
-
-const main = async () => {
-  const { action } = await inquirer.prompt({
-    type: "list",
-    name: "action",
-    message: "What would you like to do?",
-    choices: ["Enter Topic Name & ConsumerGroupId", "Exit"],
-  });
-
-  switch (action) {
-    case "Enter Topic Name & ConsumerGroupId": {
-      const { topicName, consumerGroupId } = await inquirer.prompt([
-        {
-          type: "input",
-          name: "topicName",
-          message: "What is your topic name ?",
-          default: "testtopic"
-        },
-        {
-          type: "input",
-          name: "consumerGroupId",
-          message: "What is your consumer group Id ?",
-          default: '3ab53af2-06c8-458a-936d-b2dab16d6d44',
-        },
-      ]);
-
-      setInterval(() => {
-        sendMessage(topicName, consumerGroupId)
-      }, 1000);
-      break;
-    }
-    default:
-      console.log("Exiting...");
-  }
-};
-
-main();
