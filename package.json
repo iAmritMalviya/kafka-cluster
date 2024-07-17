@@ -25,5 +25,13 @@
     "inquirer": "^10.0.2",
     "kafkajs": "^2.2.4",
     "uuid": "^9.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iAmritMalviya/kafka-cluster.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iAmritMalviya/kafka-cluster/issues"
+  },
+  "homepage": "https://github.com/iAmritMalviya/kafka-cluster#readme"
 }

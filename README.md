@@ -13,18 +13,14 @@ This document provides instructions on how to run the producer, consumer, and ad
 1. **Clone the Repository:**
 
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/iAmritMalviya/kafka-cluster.git
    ```
-
-   Replace `<repository_url>` with the actual URL of your Kafka project repository.
 
 2. **Change Directory:**
 
    ```bash
-   cd <project_directory>
+   cd kafka-cluster
    ```
-
-   Replace `<project_directory>` with the name of the directory created after cloning the repository.
 
 3. **Install Dependencies:**
 
@@ -41,9 +37,7 @@ This document provides instructions on how to run the producer, consumer, and ad
    docker-compose -f redpanda-single-broker.yaml up -d
    ```
 
-   This command starts a single-node Redpanda Kafka broker using Docker Compose. The `-f` option specifies the path to the docker-compose configuration file (`redpanda-single-broker.yaml`). The `up -d` flags tell Docker Compose to start the services defined in the configuration file in detached mode (running in the background).
-
-5. **Configure Broker URLs (Optional):**
+5. **Configure Broker URLs:**
 
    If not already configured, copy the sample environment file and provide the broker URL(s):
 
@@ -54,7 +48,7 @@ This document provides instructions on how to run the producer, consumer, and ad
    Open the `.env` file and edit the `BROKERS` variable to specify the list of broker URLs. Each URL should be in the format `host:port`. For example:
 
    ```
-   BROKERS=localhost:9092
+   BROKERS=localhost:19092
    ```
 
    **Note:** This step is optional if the broker URL is already set in the code or defined in the Docker Compose configuration.
@@ -89,22 +83,15 @@ This document provides instructions on how to run the producer, consumer, and ad
 
 **Producer:**
 
-* **Input:** The user can interact with the producer tool through a console menu and provide details like topic name and message content.
+* **Input:** The user can interact with the producer tool through a console menu and provide details like topic name and consumer group id, it will automatiacally produce the randmon messages.
 * **Expected Output:** The producer sends messages to the specified Kafka topic and displays confirmation messages upon successful sending.
 
 **Consumer:**
 
-* **Input:** The user can choose which topic to subscribe to through a console menu.
+* **Input:** The user can choose which topic to subscribe and consumer group to connect through a console menu.
 * **Expected Output:** The consumer continuously listens for messages on the subscribed topic and displays the received messages on the console.
 
 **Admin:**
 
 * **Input:** The user interacts with the admin tool using a console menu to choose actions like listing topics or creating new topics.
 * **Expected Output:** The admin tool displays a list of existing topics, creates new topics based on user input, and provides confirmation messages for completed actions.
-
-**Additional Notes:**
-
-* Remember to adjust the commands and instructions based on your specific project setup.
-* Refer to the project documentation for more details about the functionalities offered by each tool.
-
-This guide should help your teammates understand how to interact with the Kafka ecosystem using the provided tools. Feel free to customize this document further by adding screenshots or specific examples relevant to your project.
