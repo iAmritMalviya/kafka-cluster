@@ -1,0 +1,29 @@
+{
+  "name": "kafka-cluster",
+  "version": "1.0.0",
+  "description": "This document provides instructions on how to run the producer, consumer, and admin tools for interacting with a Kafka cluster.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "producer": "npx tsx src/producer.ts",
+    "consumer": "npx tsx src/consumer.ts",
+    "admin": "npx tsx src/admin.ts"
+  },
+  "keywords": [],
+  "author": "iAmritMalviya",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/mute-stream": "^0.0.4",
+    "@types/node": "^20.4.4",
+    "@types/uuid": "^9.0.2",
+    "tsx": "^4.11.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "inquirer": "^10.0.2",
+    "kafkajs": "^2.2.4",
+    "uuid": "^9.0.0"
+  }
+}
