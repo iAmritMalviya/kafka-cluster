@@ -34,12 +34,10 @@ const connectWithConsumer = async (topicName: string, consumerGroupId: string) =
         },
       });
 
-      // Handle cancellation using a promise
       await new Promise((resolve, reject) => {
-        rl.once('SIGINT', () => reject(new Error('Cancelled'))); // Listen for SIGINT signal (Ctrl+C)
+        rl.once('SIGINT', () => reject(new Error('Cancelled')));
       });
-      break; // Exit the loop on cancellation
-
+      break;
     } catch (error: any) {
       console.error(`Error connecting to Kafka (attempt ${retryCount + 1}/${MAX_RETRY_ATTEMPTS}): ${error.message}`);
       retryCount++;
@@ -71,7 +69,7 @@ const main = async () => {
       }
       case "2":
         console.log("Exiting...");
-        rl.close(); // Close readline on exit
+        rl.close(); 
         break;
       default:
         console.log("Invalid option. Please try again.");
