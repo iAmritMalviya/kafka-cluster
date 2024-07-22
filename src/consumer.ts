@@ -25,7 +25,7 @@ const connectWithConsumer = async (topicName: string, consumerGroupId: string) =
     try {
       await consumer.connect();
       console.log("Connected to Kafka!");
-
+      console.log(topicName)
       await consumer.subscribe({ topic: topicName });
       await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
