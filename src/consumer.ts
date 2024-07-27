@@ -1,5 +1,4 @@
 import { Kafka } from "kafkajs";
-import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 import { input, select } from '@inquirer/prompts';
 
@@ -49,6 +48,8 @@ const connectWithConsumer = async (topicName: string, consumerGroupId: string) =
   await consumer.disconnect();
 };
 
+
+
 const main = async () => {
   let exit = false;
 
@@ -73,59 +74,59 @@ const main = async () => {
     description: "Exit the program",
   }]})
 
-    switch (action) {
-      case 1: {
-        const adminAction = await select({message: "Admin Action", choices: [{
-          name: "List Topics",
-          value: 1,
-          description: "List all topics in the Kafka cluster",
-        },{
-          name: "Create Topic",
-          value: 2,
-          description: "Create a new topic in the Kafka cluster",
-        },{
-          name: "Exit",
-          value: 3,
-          description: "Exit the admin menu",
-        }]});
-
-        const { consumerGroupId } = await inquirer.prompt({
-          type: "input",
-          name: "consumerGroupId",
-          message: "What is your consumer group Id? (default: 0460cbbd-ca68-4243-afed-370628dc1e6e)",
-          default: "0460cbbd-ca68-4243-afed-370628dc1e6e",
-        });
-
-        await connectWithConsumer
-}]})
-
-    switch (action) {
-      case "1": {
-        const { topicName } = await inquirer.prompt({
-          type: "input",
-          name: "topicName",
-          message: "What is your topic name? (default: testtopic)",
-          default: "testtopic",
-        });
-
-        const { consumerGroupId } = await inquirer.prompt({
-          type: "input",
-          name: "consumerGroupId",
-          message: "What is your consumer group Id? (default: 0460cbbd-ca68-4243-afed-370628dc1e6e)",
-          default: "0460cbbd-ca68-4243-afed-370628dc1e6e",
-        });
-
-        await connectWithConsumer(topicName, consumerGroupId);
+  switch (action) {
+    case 1:
+        await adminUtils()
         break;
-      }
-      case "2":
-        console.log("Exiting...");
-        exit = true;
-        break;
-      default:
-        console.log("Invalid option. Please try again.");
-    }
-  }
+    case 2:
+        await consumerUtils()
+    default:
+      break;
+  }}
 };
 
 main();
+
+const adminUtils = async () => {
+
+      const adminAction = await select({message: "Admin Action", choices: [{
+        name: "List Topics",
+        value: 1,
+        description: "List all topics in the Kafka cluster",
+      },{
+        name: "Create Topic",
+        value: 2,
+        description: "Create a new topic in the Kafka cluster",
+      },{
+        name: "Exit",
+        value: 3,
+        description: "Exit the admin menu",
+      }]});
+
+      switch (adminAction) {
+        case 1:
+          console.log("admin")
+          break;
+      
+        default:
+          break;
+      }
+}
+
+
+const consumerUtils = async() => {
+
+  const action = select({message: "Select the consumer action", choices: [
+    {
+      name: "Start Consumer",
+      value: 1,
+      description: "Start consuming messages from a specific Kafka topic",
+    },
+    {
+      name: "Exit",
+      value: 2,
+      description: "Exit the consumer menu",
+    },
+  ]})
+
+}
