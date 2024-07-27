@@ -3,6 +3,7 @@ import { group } from 'console';
 import express, { Request, Response } from 'express';
 import { Admin, AssignerProtocol, Kafka } from "kafkajs";
 import { getConsumerGroupTopics, getConsumerGroupMemberInfo, clearTopic } from './utils';
+import { router } from './controller';
 
 const kafka = new Kafka({
   brokers: process.env.BROKERS?.split(',') || ["localhost:19092"],
@@ -18,7 +19,7 @@ app.use(bodyParser.json())
 const PORT = process.env.PORT || 7007;
 
 const BASEURL = '/api/v1/kafka-operation'
-
+app.use('/api/v1/kafka-operation',router)
 app.get(BASEURL + '/', (req: Request, res: Response) => {
   res.send('Hello World!');
 });
@@ -68,6 +69,7 @@ app.post(BASEURL + "/clear-topic", async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 })
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

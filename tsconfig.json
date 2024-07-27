@@ -6,7 +6,7 @@
     "strictNullChecks": false,
     "moduleResolution": "Node",
     "module": "CommonJS",
-    "target": "ES2022",
+    "target": "ES2021",
     "declaration": true,
     "isolatedModules": true,
     "noEmit": true,

@@ -65,31 +65,3 @@ const listTopics = async () => {
   }
 };
 
-const main = async () => {
-  let action;
-  do {
-    action = await new Promise((resolve) => rl.question("What would you like to do? (1 for create-topic, 2 for list-topics, 3 for exit) ", (answer: string) => resolve(answer.toLowerCase())));
-
-    switch (action) {
-      case "1": {
-        const topicName: string = await new Promise((resolve) => rl.question("What is your topic name ? ", (answer: string) => resolve(answer)));
-        const partitionCount = parseInt(await new Promise((resolve) => rl.question("How many partitions ? (default: 1) ", (answer: any) => resolve(answer || 1))), 10);
-        const replicaCount = parseInt(await new Promise((resolve) => rl.question("How many replicas ? (default: 1) ", (answer: any) => resolve(answer || 1))), 10);
-        console.log(topicName, partitionCount, replicaCount)
-        await createTopic(topicName, partitionCount, replicaCount);
-        break;
-      }
-      case "2":
-        await listTopics();
-        break;
-      default:
-        if (action !== '3') {
-          console.log("Invalid option. Please try again.");
-        }
-    }
-  } while (action !== '3');
-
-  rl.close();
-};
-
-main();

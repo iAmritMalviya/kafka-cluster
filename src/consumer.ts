@@ -1,12 +1,8 @@
 import { Kafka } from "kafkajs";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
-import readline from 'readline';
+import { input, select } from '@inquirer/prompts';
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 dotenv.config();
 
@@ -25,7 +21,6 @@ const connectWithConsumer = async (topicName: string, consumerGroupId: string) =
     try {
       await consumer.connect();
       console.log("Connected to Kafka!");
-      console.log(topicName)
       await consumer.subscribe({ topic: topicName });
       await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
@@ -35,7 +30,7 @@ const connectWithConsumer = async (topicName: string, consumerGroupId: string) =
       });
 
       await new Promise((resolve, reject) => {
-        rl.once('SIGINT', () => reject(new Error('Cancelled')));
+        process.once('SIGINT', () => reject(new Error('Cancelled')));
       });
       break;
     } catch (error: any) {
@@ -55,26 +50,82 @@ const connectWithConsumer = async (topicName: string, consumerGroupId: string) =
 };
 
 const main = async () => {
-  let action;
-  do {
-    action = await new Promise((resolve) => rl.question("What would you like to do? (press 1 for enter topic & group, press 2 for exit) ", (answer: string) => resolve(answer.toLowerCase())));
+  let exit = false;
+
+  while (!exit) {
+    const action = await select({message: "Select your action", choices: [{
+      name: "Admin",
+      value: 1,
+      description: "Manage Kafka cluster",
+    }, 
+  {
+    name: "Producer",
+    value: 2,
+    description: "Send messages to Kafka",
+  }, 
+{
+  name: "Consumer",
+  value: 3,
+  description: "Consume messages from Kafka",
+  },{
+    name: "Exit",
+    value: 4,
+    description: "Exit the program",
+  }]})
+
+    switch (action) {
+      case 1: {
+        const adminAction = await select({message: "Admin Action", choices: [{
+          name: "List Topics",
+          value: 1,
+          description: "List all topics in the Kafka cluster",
+        },{
+          name: "Create Topic",
+          value: 2,
+          description: "Create a new topic in the Kafka cluster",
+        },{
+          name: "Exit",
+          value: 3,
+          description: "Exit the admin menu",
+        }]});
+
+        const { consumerGroupId } = await inquirer.prompt({
+          type: "input",
+          name: "consumerGroupId",
+          message: "What is your consumer group Id? (default: 0460cbbd-ca68-4243-afed-370628dc1e6e)",
+          default: "0460cbbd-ca68-4243-afed-370628dc1e6e",
+        });
+
+        await connectWithConsumer
+}]})
 
     switch (action) {
       case "1": {
-        const topicName: string = await new Promise((resolve) => rl.question("What is your topic name ? (default: testtopic) ", (answer: any) => resolve(answer || "testtopic")));
-        const consumerGroupId : string = await new Promise((resolve) => rl.question("What is your consumer group Id ? (default: 0460cbbd-ca68-4243-afed-370628dc1e6e) ", (answer: any) => resolve(answer ||"0460cbbd-ca68-4243-afed-370628dc1e6e")));
+        const { topicName } = await inquirer.prompt({
+          type: "input",
+          name: "topicName",
+          message: "What is your topic name? (default: testtopic)",
+          default: "testtopic",
+        });
+
+        const { consumerGroupId } = await inquirer.prompt({
+          type: "input",
+          name: "consumerGroupId",
+          message: "What is your consumer group Id? (default: 0460cbbd-ca68-4243-afed-370628dc1e6e)",
+          default: "0460cbbd-ca68-4243-afed-370628dc1e6e",
+        });
 
         await connectWithConsumer(topicName, consumerGroupId);
         break;
       }
       case "2":
         console.log("Exiting...");
-        rl.close(); 
+        exit = true;
         break;
       default:
         console.log("Invalid option. Please try again.");
     }
-  } while (action !== "2");
+  }
 };
 
 main();

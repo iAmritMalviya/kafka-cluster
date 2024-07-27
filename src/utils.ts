@@ -259,3 +259,45 @@ function filterEligiblePartitions(topicOffsets, clientOffsets) {
     };
   }
   
+
+  const MAX_RETRY_ATTEMPTS = parseInt(process.env.MAX_RETRY_ATTEMPTS as string) || 3;
+
+
+
+  const connectWithConsumer = async (topicName: string, consumerGroupId: string) => {
+    const consumer = kafka.consumer({ groupId: consumerGroupId });
+  
+    let retryCount = 0;
+  
+    while (retryCount < MAX_RETRY_ATTEMPTS) {
+      try {
+        await consumer.connect();
+        console.log("Connected to Kafka!");
+        await consumer.subscribe({ topic: topicName });
+        await consumer.run({
+          eachMessage: async ({ topic, partition, message }) => {
+            const formattedValue = JSON.parse((message.value as Buffer).toString());
+            console.log(`${topic}: ${partition}: ${formattedValue.user}: ${formattedValue.message}`);
+          },
+        });
+  
+        await new Promise((resolve, reject) => {
+          process.once('SIGINT', () => reject(new Error('Cancelled')));
+        });
+        break;
+      } catch (error: any) {
+        console.error(`Error connecting to Kafka (attempt ${retryCount + 1}/${MAX_RETRY_ATTEMPTS}): ${error.message}`);
+        retryCount++;
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    }
+  
+    if (retryCount === MAX_RETRY_ATTEMPTS) {
+      console.error("Failed to connect to Kafka after retries.");
+    } else {
+      console.log("Consumer disconnected (Cancelled).");
+    }
+  
+    await consumer.disconnect();
+  };
+  
