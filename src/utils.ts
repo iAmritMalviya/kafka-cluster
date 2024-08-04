@@ -301,3 +301,32 @@ function filterEligiblePartitions(topicOffsets, clientOffsets) {
     await consumer.disconnect();
   };
   
+
+export const listTopic = async (admin: Admin) => {
+  try {
+    await admin.connect()
+    const list = await admin.listTopics()
+    console.log(list)
+  } catch (error) {
+    console.error(error.message)
+    return []
+  } finally{
+    console.log('Admin disconnected...')
+    await admin.disconnect()
+  }
+}
+
+export const createTopic = async (admin: Admin, topicName: string): Promise<boolean> => {
+  try {
+    return await admin.createTopics({
+      topics: [{
+        topic: topicName,
+        numPartitions: 1,
+        replicationFactor: 1,
+      }],
+    })
+  } catch (error) {
+    return false;
+  }
+}
+

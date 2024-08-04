@@ -9,7 +9,7 @@
     "producer": "npx tsx src/producer.ts",
     "consumer": "npx tsx src/consumer.ts",
     "admin": "npx tsx src/admin.ts",
-    "index": "nodemon"
+    "start": "nodemon"
   },
   "keywords": [],
   "author": "iAmritMalviya",
@@ -26,12 +26,15 @@
   "dependencies": {
     "@inquirer/prompts": "^5.3.2",
     "@types/inquirer": "^9.0.7",
+    "@types/pg": "^8.11.6",
     "body-parser": "^1.20.2",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "kafkajs": "^2.2.4",
+    "knex": "^3.1.0",
     "nodemon": "^3.1.4",
+    "pg": "^8.12.0",
     "uuid": "^9.0.0"
   },
   "repository": {
